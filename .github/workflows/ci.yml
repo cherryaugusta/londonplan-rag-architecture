@@ -1,0 +1,99 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build-and-check:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: client/londonplan-client/package-lock.json
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Install backend dependencies
+        shell: pwsh
+        run: |
+          Set-Location api
+          python -m venv .venv
+          .\.venv\Scripts\Activate.ps1
+          python -m pip install --upgrade pip setuptools wheel
+          pip install -r requirements-dev.txt
+
+      - name: Install frontend dependencies
+        shell: pwsh
+        run: |
+          Set-Location client\londonplan-client
+          npm ci
+
+      - name: Start PostgreSQL and Redis
+        shell: pwsh
+        run: |
+          docker compose up -d postgres redis
+
+      - name: Wait for containers to become healthy
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+
+          function Wait-ForHealthy($containerName, $timeoutSeconds = 120) {
+            $deadline = (Get-Date).AddSeconds($timeoutSeconds)
+
+            while ((Get-Date) -lt $deadline) {
+              $status = docker inspect --format="{{if .State.Health}}{{.State.Health.Status}}{{else}}{{.State.Status}}{{end}}" $containerName 2>$null
+              if ($status -eq "healthy") {
+                Write-Host "$containerName is healthy"
+                return
+              }
+
+              Start-Sleep -Seconds 5
+            }
+
+            Write-Host "Timed out waiting for $containerName to become healthy" -ForegroundColor Red
+            docker compose ps
+            docker compose logs postgres
+            docker compose logs redis
+            exit 1
+          }
+
+          Wait-ForHealthy "londonplan-postgres"
+          Wait-ForHealthy "londonplan-redis"
+
+      - name: Tree check
+        shell: pwsh
+        run: |
+          .\scripts\tree-check.ps1
+
+      - name: Export OpenAPI schema
+        shell: pwsh
+        run: |
+          .\scripts\export-openapi.ps1
+
+      - name: Run gates
+        shell: pwsh
+        run: |
+          .\scripts\gates.ps1
+
+      - name: Run dependency audit
+        shell: pwsh
+        run: |
+          .\scripts\audit-python.ps1

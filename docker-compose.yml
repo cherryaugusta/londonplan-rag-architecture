@@ -1,0 +1,58 @@
+services:
+  postgres:
+    image: postgis/postgis:16-3.4
+    container_name: londonplan-postgres
+    environment:
+      POSTGRES_DB: londonplan
+      POSTGRES_USER: londonplan
+      POSTGRES_PASSWORD: londonplan_dev_password
+    ports:
+      - "55432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./infra/postgres-init.sql:/docker-entrypoint-initdb.d/postgres-init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U londonplan -d londonplan"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7
+    container_name: londonplan-redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: londonplan-api
+    working_dir: /app
+    command: gunicorn londonplan_api.wsgi:application --bind 0.0.0.0:8000
+    environment:
+      DJANGO_DEBUG: "1"
+      DJANGO_SECRET_KEY: "INSECURE_DEV_ONLY_CHANGE_ME"
+      DJANGO_ALLOWED_HOSTS: "localhost,127.0.0.1"
+      DB_NAME: londonplan
+      DB_USER: londonplan
+      DB_PASSWORD: londonplan_dev_password
+      DB_HOST: postgres
+      DB_PORT: "5432"
+      REDIS_URL: redis://redis:6379/0
+      CORS_ALLOWED_ORIGINS: http://localhost:4200,http://127.0.0.1:4200
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+volumes:
+  postgres_data:

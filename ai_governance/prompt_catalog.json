@@ -1,0 +1,48 @@
+{
+  "project": "LondonPlanRAG",
+  "version": "0.1.0",
+  "prompts": [
+    {
+      "id": "planning-change-summary-v1",
+      "name": "Planning change summary",
+      "purpose": "Summarise newly ingested planning and consultation documents for analyst review.",
+      "inputs": [
+        "document_title",
+        "document_source",
+        "document_date",
+        "diff_summary",
+        "top_entities",
+        "top_locations"
+      ],
+      "output_contract": {
+        "summary": "string",
+        "risk_tags": ["policy-change", "density-shift", "transport-impact", "heritage-risk", "procedural-update"],
+        "confidence": "number"
+      },
+      "human_review_required": true
+    },
+    {
+      "id": "query-answer-with-citations-v1",
+      "name": "RAG answer with citations",
+      "purpose": "Draft a user-facing answer based on retrieved planning documents and structured filters.",
+      "inputs": [
+        "user_query",
+        "retrieved_chunks",
+        "structured_constraints",
+        "geo_filters"
+      ],
+      "output_contract": {
+        "answer": "string",
+        "citations": [
+          {
+            "source_id": "string",
+            "title": "string",
+            "page": "string"
+          }
+        ],
+        "follow_up_questions": ["string"]
+      },
+      "human_review_required": true
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "generatorName": "typescript-angular",
+  "inputSpec": "../../docs/api/openapi.yaml",
+  "output": "src/app/generated-api-client",
+  "additionalProperties": {
+    "providedInRoot": true,
+    "stringEnums": true,
+    "withInterfaces": true,
+    "useSingleRequestParameter": true
+  }
+}

@@ -1,0 +1,81 @@
+openapi: 3.0.3
+info:
+  title: LondonPlan RAG API
+  version: 0.1.0
+  description: Planning & Development Intelligence Copilot API
+paths:
+  /api/health/:
+    get:
+      operationId: health_retrieve
+      tags:
+      - health
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+          description: ''
+        '503':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+          description: ''
+components:
+  schemas:
+    DependencyHealth:
+      type: object
+      properties:
+        ok:
+          type: boolean
+        detail:
+          type: string
+      required:
+      - detail
+      - ok
+    HealthDependencies:
+      type: object
+      properties:
+        database:
+          $ref: '#/components/schemas/DependencyHealth'
+        redis:
+          $ref: '#/components/schemas/DependencyHealth'
+      required:
+      - database
+      - redis
+    HealthResponse:
+      type: object
+      properties:
+        service:
+          $ref: '#/components/schemas/ServiceEnum'
+        time:
+          type: string
+          format: date-time
+        correlation_id:
+          type: string
+          nullable: true
+        dependencies:
+          $ref: '#/components/schemas/HealthDependencies'
+      required:
+      - correlation_id
+      - dependencies
+      - service
+      - time
+    ServiceEnum:
+      enum:
+      - londonplan-api
+      type: string
+      description: '* `londonplan-api` - londonplan-api'
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid

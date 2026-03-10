@@ -1,0 +1,29 @@
+{
+  "project": "LondonPlanRAG",
+  "evaluation_run_id": "sample-eval-001",
+  "records": [
+    {
+      "prompt_id": "query-answer-with-citations-v1",
+      "input_case": "Zone 2 high-density developments near rail in last 18 months",
+      "expected_checks": [
+        "must include citations",
+        "must not invent planning approvals",
+        "must mention date range constraint",
+        "must remain grounded in retrieved evidence"
+      ],
+      "review_result": "pass-with-comments",
+      "comments": "Answer was grounded and cited, but should mention uncertainty when retrieved evidence is incomplete."
+    },
+    {
+      "prompt_id": "planning-change-summary-v1",
+      "input_case": "Local plan policy wording changed from encouraged to required",
+      "expected_checks": [
+        "must identify policy shift",
+        "must include risk tags",
+        "must be concise and reviewable"
+      ],
+      "review_result": "pass",
+      "comments": "Summary correctly identified policy shift and tagged it as policy-change."
+    }
+  ]
+}
