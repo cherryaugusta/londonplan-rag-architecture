@@ -1,11 +1,10 @@
-
 # LondonPlan RAG — Planning & Development Intelligence Copilot
 
 Educational portfolio project demonstrating a regulated-style, AI-adjacent platform architecture using Django, DRF, Angular, OpenAPI contracts, secure defaults, and governance artifacts.
 
 ---
 
-# Disclaimer
+## Disclaimer
 
 This repository is an **educational portfolio project** created to demonstrate software architecture, engineering practices, and governance patterns relevant to AI-adjacent systems.
 
@@ -15,7 +14,7 @@ All planning-related terminology and examples are used solely for **demonstratio
 
 ---
 
-# Why this project
+## Why this project
 
 This project demonstrates how to design an AI-adjacent information system for a regulated-style environment where **traceability, contract discipline, and secure defaults** matter as much as feature delivery.
 
@@ -23,7 +22,7 @@ The focus is on **architecture, reliability, and governance patterns**, not just
 
 ---
 
-# What it does
+## What it does
 
 - Provides a health endpoint with dependency validation
 - Exposes an OpenAPI schema and Swagger UI
@@ -33,7 +32,20 @@ The focus is on **architecture, reliability, and governance patterns**, not just
 
 ---
 
-# Demo
+## Key engineering signals
+
+This repository is designed to highlight:
+
+- contract-first API development with OpenAPI
+- typed frontend-backend integration using Angular and strict TypeScript
+- regulated-style engineering patterns such as traceability and governance records
+- secure-by-default implementation choices
+- dependency validation and health reporting
+- repository-level quality gates for structure, security, and contracts
+
+---
+
+## Demo
 
 ![Angular health page](screenshots/angular-health-page.png)
 
@@ -41,7 +53,7 @@ The focus is on **architecture, reliability, and governance patterns**, not just
 
 ---
 
-# Architecture
+## Architecture
 
 ```mermaid
 flowchart LR
@@ -55,7 +67,7 @@ flowchart LR
 
 ---
 
-# Example API response
+## Example API response
 
 ```json
 {
@@ -71,55 +83,74 @@ flowchart LR
 
 ---
 
-# Stack
+## Stack
 
-**API**
+### API
 
 * Django
 * Django REST Framework
 * drf-spectacular
 
-**Client**
+### Client
 
 * Angular
 * Strict TypeScript
 
-**Data**
+### Data
 
 * PostgreSQL / PostGIS
 * Redis
 
-**Security**
+### Security
 
 * pre-commit
 * gitleaks
 * dependency audit
 * secure defaults
 
-**Contracts**
+### Contracts
 
 * OpenAPI export
 * OpenAPI contract locking
 * generated TypeScript API client
 
-**Governance**
+### Governance
 
 * AI prompt catalog
 * evaluation records
 
 ---
 
-# Local development
+## Project structure
 
-## Infrastructure
+```text
+.
+├── LICENSE
+├── README.md
+├── docker-compose.yml
+├── api/
+├── client/
+│   └── londonplan-client/
+├── scripts/
+├── screenshots/
+│   ├── angular-health-page.png
+│   └── swagger-ui.png
+└── ...
+```
+
+---
+
+## Local development
+
+### Infrastructure
+
+Start the supporting services first:
 
 ```powershell
 docker compose up -d postgres redis
 ```
 
----
-
-## Backend
+### Backend
 
 ```powershell
 Set-Location .\api
@@ -131,13 +162,11 @@ python manage.py runserver 0.0.0.0:8000
 
 Swagger UI:
 
-```
+```text
 http://localhost:8000/api/docs/
 ```
 
----
-
-## Frontend
+### Frontend
 
 ```powershell
 Set-Location .\client\londonplan-client
@@ -146,13 +175,21 @@ npm start
 
 Angular dev server:
 
-```
+```text
 http://localhost:4200
+```
+
+If a command hangs or you need to stop a running process, press:
+
+```text
+CTRL + C
 ```
 
 ---
 
-# Full Docker stack
+## Full Docker stack
+
+Run the full application stack with:
 
 ```powershell
 docker compose up --build
@@ -160,7 +197,7 @@ docker compose up --build
 
 ---
 
-# Quality gates
+## Quality gates
 
 Run repository validation checks:
 
@@ -170,32 +207,36 @@ Run repository validation checks:
 .\scripts\audit-python.ps1
 ```
 
+These checks are intended to verify repository structure, baseline quality controls, and dependency posture.
+
 ---
 
-# OpenAPI contract workflow
+## OpenAPI contract workflow
 
-Export OpenAPI schema:
+### Export OpenAPI schema
 
 ```powershell
 .\scripts\export-openapi.ps1
 ```
 
-Verify contract lock:
+### Verify contract lock
 
 ```powershell
 .\scripts\check-openapi-lock.ps1
 ```
 
-Generate Angular API client:
+### Generate Angular API client
 
 ```powershell
 Set-Location .\client\londonplan-client
 npm run generate:api
 ```
 
+This workflow reinforces contract discipline between the Django API and Angular client.
+
 ---
 
-# Security-by-design decisions
+## Security-by-design decisions
 
 * correlation ID propagation
 * secure cookie and browser header defaults
@@ -205,7 +246,18 @@ npm run generate:api
 
 ---
 
-# Roadmap
+## Operational posture
+
+This repository is intentionally positioned as a portfolio-grade and governance-aware reference project. It emphasizes:
+
+* traceability over feature sprawl
+* contract stability over ad hoc integration
+* secure defaults over convenience-first configuration
+* explainable repository structure over hidden assumptions
+
+---
+
+## Roadmap
 
 * add sample planning document endpoint
 * add query preview endpoint with citations
@@ -215,7 +267,7 @@ npm run generate:api
 
 ---
 
-# Limitations
+## Limitations
 
 * current domain functionality is intentionally minimal
 * no production authentication or authorization yet
@@ -223,8 +275,12 @@ npm run generate:api
 
 ---
 
-# License
+## License
 
-Portfolio code — add a license appropriate to your intended usage.
+This project is licensed under the MIT License.
+
+Copyright (c) 2026 Cherry Augusta
+
+See the [LICENSE](./LICENSE) file for full details.
 
 ---
